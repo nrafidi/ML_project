@@ -1,4 +1,7 @@
-from math import sqrt
+import numpy as np
+
+# these also have equivalents in scipy.spatial.distance, but perhaps
+# SciPy is less likely to be installed
 
 def get_dist(pt1, pt2):
     ed = euclid(pt1, pt2)
@@ -7,23 +10,10 @@ def get_dist(pt1, pt2):
     return (ed, md, cd)
 
 def euclid(ep1, ep2):
-    edist = 0
-    for i, p in enumerate(ep1):
-        edist += (p - ep2[i])*(p - ep2[i])
-    return sqrt(edist)
+    return np.linalg.norm(ep1 - ep2)
 
 def manhat(mp1, mp2):
-    mdist = 0
-    for i, p in enumerate(mp1):
-        mdist += abs(p-mp2[i])
-    return mdist
+    return np.sum(np.abs(mp1 - mp2))
 
 def cosine(p1, p2):
-    dist = 0
-    Z = [];
-    for i in range(len(p1)):
-        Z.append(0)
-    denom = euclid(Z, p1)*euclid(Z, p2)
-    for i, p in enumerate(p1):
-        dist += (p*p2[i])
-    return dist/denom
+    return 1 - np.dot(p1, p2) / (np.linalg.norm(p1) * np.linalg.norm(p2))
