@@ -44,7 +44,9 @@ def get_interest_points(arr, sigma=1, tau=1, k=5e-4, n_pts=400):
 
 ## TODO the flows seem to be more on the range of \pm 20, so let's
 ## maybe try that later
-bins = np.linspace(-4, 4, 32)
+bins = np.linspace(-4, 4, 33)
+bins[0] = -1e10
+bins[-1] = 1e10
 def compute_descriptors(frames, nbhd=(8,8,5)):
     pts = get_interest_points(frames)
     flo = flow.get_flow(frames)
@@ -52,9 +54,9 @@ def compute_descriptors(frames, nbhd=(8,8,5)):
     nx, ny, nt = nbhd
     sx, sy, st = frames.shape
 
-    inds = ((nx <= pts[0,:] < sx - nx) &
-            (ny <= pts[1,:] < sy - ny) &
-            (nt <= pts[2,:] < st - nt))
+    inds = ((nx <= pts[0,:]) & (pts[0,:] < sx - nx) &
+            (ny <= pts[1,:]) & (pts[1,:] < sy - ny) &
+            (nt <= pts[2,:]) & (pts[2,:] < st - nt))
 
     pts = pts[:,inds]
 
@@ -64,10 +66,10 @@ def compute_descriptors(frames, nbhd=(8,8,5)):
                       y-ny:y+ny+1,
                       t-nt:t+nt+1]
 
-        xhist = np.histogram(sub_flo[...,0], bins=bins)
-        yhist = np.histogram(sub_flo[...,1], bins=bins)
-        xhist /= xhist.sum()
-        yhist /= yhist.sum()
+        xhist, _ = np.histogram(sub_flo[...,0], bins=bins)
+        yhist, _ = np.histogram(sub_flo[...,1], bins=bins)
+        xhist = xhist.astype(np.float64) / xhist.sum()
+        yhist = xhist.astype(np.float64) / yhist.sum()
 
         descs.append(np.hstack([xhist, yhist]))
 
