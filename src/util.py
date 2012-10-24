@@ -1,9 +1,24 @@
 import subprocess
 import tempfile
 
+import cv2
 import numpy as np
 
 import Image
+
+def vidread(fn):
+    vid = cv2.VideoCapture(fn)
+    frames = []
+    while True:
+        _, frame = vid.read()
+        if frame is None: break
+
+        if frame.ndim == 3:
+            frame = frame.mean(2).astype(frame.dtype)
+        frames.append(frame)
+
+    frames = np.dstack(frames)
+    return frames
 
 def vidwrite(frames, fn):
     d = tempfile.mkdtemp()
