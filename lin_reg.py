@@ -1,83 +1,25 @@
-import numpy
-import glob
-#import danny's codes
+#This module has two methods: one to train a ridge regressor and one
+#to use a given ridge regressor to make predictions. If y is of dimension k
+#you must call this k times to make k separate regressors
 
-def lin_reg_train(directory)
+#Requires Numpy, Scipy, and Scikit-learn
+import numpy as np
+import sklearn.linear_model
 
-    
-    X = []
-    Y = []
-    for filename in glob.glob(directoryr + '/*.txt'):
-        with open(filename) as f
-            s = f.readline()
-            
-            #We need to discuss how these files are formatted
-            ss = s.split('" (')
+#features = array-like object, size n_samples x n_features
+#labels = array-like object, size n_samples x 1
+#centered = boolean expressing whether the data has been centered. If set to
+#true, the model will not calculate an intercept
+#alphas =  regularization parameter to iterate over in the CV
+#classifier = A ridge classifier
+def lin_reg_train(features, labels, not_centered):
+    alphas = np.array([0.1, 1, 10, 100])
+    classifier = sklearn.linear_model.RidgeClassifierCV(alphas, not_centered)
+    classifier.fit(features, labels)
+    return classifier
 
-            #Here I call Danny's code. What is it returning?
-            X.append(danny(ss[0] + '"'))
-
-            y = [];
-
-            for i in ss[1]
-                if (i != ',' and i != ' ' and i != ')')
-                    y.append(int(i))
-                    
-            Y.append(y)
-            
-    numex = len(X)
-    errL = [] #make numpy array
-    for lam in range(0:1000:1)
-        err = 0;
-        for j in range(0:(numex - 1))
-            testX = X[j]
-            testY = Y[j]
-
-            trainX = X.pop(j)
-            trainY = Y.pop(j)
-
-            X.insert(j, testX)
-            Y.insert(j, testY)
-
-
-            #figure out how to use numpy
-            #M = trainXT*trainX + lam*I (I is size of feature space)
-            #Invert M try: except LinAlgError:
-            #W = Minv*trainXT*trainY
-
-            guessY = dot(testX, W)
-
-            if !(guessY == testY).all():
-                err += 1
-            
-        err  = err/num_x
-        errL.append(err)
-
-    L = errL.argmin()
-
-    #get W and return it
-
-def lin_reg_test(W, fname)
-    X = []
-    Y = []
-    f = open(fname, 'r')
-    s = f.readline()
-    
-    #We need to discuss how these files are formatted
-    ss = s.split('" (')
-
-    #Here I call Danny's code. What is it returning?
-    X.append(danny(ss[0] + '"'))
-
-    y = [];
-
-    for i in ss[1]
-        if (i != ',' and i != ' ' and i != ')')
-            y.append(int(i))
-            
-    Y.append(y)
-
-    guessY = dot(X, W)
-
-    return [Y, guessY]
+#Given a classifier and a feature array, what is the prediction
+#This is probably not necessary
+def lin_reg_test(classifier, features):
+    return classifier.predict(features)
     

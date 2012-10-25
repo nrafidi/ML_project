@@ -1,3 +1,6 @@
+#Calculates Euclidean, Manhattan and Cosine distance between two points and
+#Returns all three distances in a list
+
 from math import sqrt
 
 def get_dist(pt1, pt2):
