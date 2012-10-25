@@ -6,14 +6,17 @@ import tempfile
 import cv2
 import Image
 import numpy as np
-from scipy.ndimage import filters
 
+## Given a 3-D array representing a video, compute the optical flow at
+## every point.
 def get_flow(frames):
     flows = []
     for frame_num in xrange(frames.shape[-1]-1):
         f1 = frames[...,frame_num]
         f2 = frames[...,frame_num+1]
 
+        # TODO figure out what these parameters should be; these seem
+        # to provide okay results
         flow = cv2.calcOpticalFlowFarneback(f1, f2, flow=None,
                                             pyr_scale=.5, levels=5, winsize=5, iterations=4,
                                             poly_n=5, poly_sigma=1.1, flags=0)
