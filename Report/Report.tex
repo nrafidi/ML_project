@@ -1,0 +1,43 @@
+\documentclass{article} 
+\usepackage{nips12submit_e,times}
+\usepackage{textcomp}
+
+\pagestyle{empty}
+\nipsfinalcopy
+
+\title{Zero-Shot Learning for Human Action Recognition}
+\author{Nicole Rafidi \\
+  \texttt{nrafidi@cs.cmu.edu}
+  \And
+  Yuzuko Nakamura \\
+  \texttt{yuzi@cs.cmu.edul}
+  \And
+  Danny Zhu \\
+  \texttt{dannyz@cs.cmu.edu}
+}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+
+\section{Related Work}
+Zero-shot learning (ZSL) enables one to classify input into classes not yet seen in training data by making use of a semantic knowledge base as an intermediate step between the features and classes \cite{Palatucci09}. The main objective of this project is to see whether zero-shot learning yields good performance in human action recognition. Human action recognition is a domain in which there are many possible class labels (actions), making it intractable to provide examples of each action in a training set \cite{Poppe10}. This makes it a good candidate for improvement by zero-shot learning.
+\section{Methods}
+In order to do this, we must establish two steps of classification on the videos in the data sets. First, we must find a low-dimensional set of core features that can be used to distinguish the labels (running, walking, etc). It is possible that we will find a pre-established feature set based on text corpus statistics or psycholinguistic surveys. Alternatively, we could design our own feature set, based on our knowledge of human actions. Second, we will explore ways of converting the raw data (videos) to points in this feature space.  To test the effectiveness of this two-step method over direct video-to-label mappings, we can perform leave-two-out cross-validation, and demonstrate the ZSL classifier’s ability to distinguish between two previously unseen class labels based on their video data, a task that direct mappings are unable to perform.
+\subsection{Materials}
+Data was taken from the following two data sets:
+\begin{enumerate}
+\item KTH: http://www.nada.kth.se/cvap/actions/
+\item Weizmann: http://www.wisdom.weizmann.ac.il/\texttildelow vision/SpaceTimeActions.html
+\end{enumerate}
+
+\section{Preliminary Results} %Will later be Results
+
+\section{Future Work} %Will later be Conclusion
+
+\bibliographystyle{ieeetr}
+\bibliography{sources}
+
+\end{document}
