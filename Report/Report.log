@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.1.17)  27 OCT 2012 16:21
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.1.17)  1 NOV 2012 21:08
 entering extended mode
 **C:/Python27/Scripts/ML_project/Report/Report.tex
 (C:/Python27/Scripts/ML_project/Report/Report.tex
@@ -168,6 +168,23 @@ Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 338.
 Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 339.
 Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 340.
 )
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+)
+\Gin@req@height=\dimen106
+\Gin@req@width=\dimen107
+)
 (C:\Python27\Scripts\ML_project\Report\Report.aux)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
@@ -198,13 +215,13 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 (C:\Users\Nicole\AppData\Roaming\MiKTeX\2.9\tex\context\base\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count93
-\scratchdimen=\dimen106
+\scratchdimen=\dimen108
 \scratchbox=\box29
 \nofMPsegments=\count94
 \nofMParguments=\count95
 \everyMPshowfont=\toks15
 \MPscratchCnt=\count96
-\MPscratchDim=\dimen107
+\MPscratchDim=\dimen109
 \MPnumerator=\count97
 \makeMPintoPDFobject=\count98
 \everyMPtoPDFconversion=\toks16
@@ -222,35 +239,61 @@ LaTeX Font Info:    Try loading font information for OT1+pcr on input line 20.
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 22.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 21.
+ [1
+
+{C:/Users/Nicole/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<2stagelearning.png, id=9, 614.295pt x 425.4294pt>
+File: 2stagelearning.png Graphic file (type png)
+ <use 2stagelearning.png>
+Package pdftex.def Info: 2stagelearning.png used on input line 45.
+(pdftex.def)             Requested size: 119.2467pt x 82.57863pt.
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
-LaTeX Font Info:    Try loading font information for TS1+ptm on input line 33.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ts1ptm.fd"
+<ltocv.png, id=11, 483.2454pt x 316.5426pt>
+File: ltocv.png Graphic file (type png)
+ <use ltocv.png>
+Package pdftex.def Info: ltocv.png used on input line 56.
+(pdftex.def)             Requested size: 119.2467pt x 78.10664pt.
+ [2 <C:/Python27/Scripts/ML_project/Report/2stagelearning.png> <C:/Python27/Scr
+ipts/ML_project/Report/ltocv.png>]
+LaTeX Font Info:    Try loading font information for TS1+ptm on input line 79.
+ ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ts1ptm.fd"
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-(C:\Python27\Scripts\ML_project\Report\Report.bbl) [1
 
-{C:/Users/Nicole/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-(C:\Python27\Scripts\ML_project\Report\Report.aux) ) 
+LaTeX Warning: Reference `pove' on page 3 undefined on input line 123.
+
+(C:\Python27\Scripts\ML_project\Report\Report.bbl [3]) [4]
+(C:\Python27\Scripts\ML_project\Report\Report.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2195 strings out of 494045
- 30129 string characters out of 3145966
- 83724 words of memory out of 3000000
- 5496 multiletter control sequences out of 15000+200000
+ 2374 strings out of 494045
+ 32544 string characters out of 3145966
+ 89945 words of memory out of 3000000
+ 5661 multiletter control sequences out of 15000+200000
  14181 words of font info for 30 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 37i,8n,39p,910b,195s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files (x86)/MiK
-TeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program Files (x86)/MiKTeX 2.9/font
-s/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/u
-rw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/ut
-mr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report.pdf (1 page, 53879 bytes).
+ 37i,8n,39p,888b,215s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program 
+Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Fi
+les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files
+ (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x
+86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/Mi
+KTeX 2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/
+fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
+/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/
+utmri8a.pfb>
+Output written on Report.pdf (4 pages, 486150 bytes).
 PDF statistics:
- 23 PDF objects out of 1000 (max. 8388607)
+ 61 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

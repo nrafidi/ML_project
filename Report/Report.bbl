@@ -9,4 +9,34 @@ M.~Palatucci, D.~Pomerleau, G.~Hinton, and T.~Mitchell, ``Zero-shot learning
 R.~Poppe, ``A survey on vision-based human action recognition,'' {\em Image and
   Vision Computing}, vol.~28, no.~6, pp.~976 -- 990, 2010.
 
+\bibitem{Laptev05}
+I.~Laptev, ``On space-time interest points,'' {\em Int. J. Comput. Vision},
+  vol.~64, pp.~107--123, Sept. 2005.
+
+\bibitem{Laptev04}
+I.~Laptev and T.~Lindeberg, ``Local descriptors for spatio-temporal
+  recognition,'' in {\em In First International Workshop on Spatial Coherence
+  for Visual Motion Analysis}, 2004.
+
+\bibitem{scipy}
+E.~Jones, T.~Oliphant, P.~Peterson, {\em et~al.}, ``{SciPy}: Open source
+  scientific tools for {Python},'' 2001--.
+
+\bibitem{numpy}
+``Numpy.''
+
+\bibitem{opencv}
+G.~Bradski, ``{The OpenCV Library},'' {\em Dr. Dobb's Journal of Software
+  Tools}, 2000.
+
+\bibitem{pil}
+``Python image library.''
+
+\bibitem{scikit}
+F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
+  M.~Blondel, P.~Prettenhofer, R.~Weiss, V.~Dubourg, J.~Vanderplas, A.~Passos,
+  D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay, ``{Scikit-learn:
+  Machine Learning in Python },'' {\em Journal of Machine Learning Research},
+  vol.~12, pp.~2825--2830, 2011.
+
 \end{thebibliography}
