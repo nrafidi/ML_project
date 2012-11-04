@@ -26,6 +26,10 @@ Zero-shot learning (ZSL) enables one to classify input into classes not yet seen
 
 \section{Related Work}
 
+Semantic knowledge bases both user-defined (e.g. \cite{Vogel07} and \cite{Park04}) and automatically learned (e.g. \cite{Zhao10}) have previously been used as tools for learning and classifying actions. \cite{Vogel07} recognizes classes of outdoor scenes by segmenting an image into tiles and classifying each into a visual concept such as water, foliage, and rocks, and then using the resulting grids to perform classification. In order to describe motion, \cite{Park04} defines a set of operation triplets that each correspond to a way in which specific body parts can move. They then translate a video sequence into a subset of those triplets using domain-specific knowledge. Learning techniques using a bag of visual words approach to the problem such as \cite{Zhao10} often use algorithms to learn the semantics of a lower-level, raw visual vocabulary in order to achieve more accurate classification results.
+
+Similar to our approach, these works all make use of an intermediate step to process low-level visual features into something more meaningful before performing classification. However, these approaches are only applied to the domain of training on a set of actions and classifying video containing those actions. By contrast, our approach makes use of a user-defined semantic knowledge base to enable a classifier to correctly classify actions not present in training data.
+
 \section{Methods}
 
 \subsection{Two-Stage Learning}
