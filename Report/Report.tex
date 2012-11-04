@@ -99,8 +99,25 @@ $Limbs$: (4 features, each Discrete 1-5) speed of each of the four limbs.
 \end{enumerate}
 \subsubsection{Coding Libraries}
 This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}.
+
 \section{Preliminary Results} %Will later be Results
-Oh Em Gee you guysssss
+For each class, we measured the average rate of true positives of the classification pipeline on that class, across all trials when that class was one of the left-out ones. Each left-out class was represented in semantic space by the vector of modes of each feature, taken over the manually-created labels for that class.
+
+\begin{tabular}{|c|c|}\hline
+  bend & 0.583\\\hline
+  boxing & 0.838\\\hline
+  handclapping & 0.915\\\hline
+  handwaving & 0.998\\\hline
+  jogging & 0.939\\\hline
+  jump & 0.741\\\hline
+  running & 0.611\\\hline
+  run & 0.625\\\hline
+  side & 0.917\\\hline
+  skip & 0.592\\\hline
+  walking & 0.772\\\hline
+  walk & 0.850\\\hline
+  wave1 & 0.602\\\hline
+\end{tabular}
 
 \section{Future Work} %Will later be Conclusion
 At the time of submission, we estimated chance-performance as 50\% correct selections in LTOCV.  However, this may be an under-estimation of chance performance. A more rigorous way to establish statistical significance of LTOCV results is described in section \ref{stats}. 
