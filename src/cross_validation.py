@@ -16,10 +16,7 @@ import video
 VIDEO_DIR = '../videos'
 LABEL_DIR = '../labels'
 
-actions = np.array(['bend', 'boxing', 'handclapping', 'jack', 'jogging', 'jump', 'running', 'run', 'side', 'skip', 'walking', 'walk', 'wave1', 'wave2'])
-# TODO wave2 jack
-actions = np.array(['bend', 'boxing', 'handclapping', 'handwaving', 'jogging', 'jump', 'running', 'run', 'side', 'skip', 'walking', 'walk', 'wave1'])
-# handwaving??
+from actions import actions
 
 # read all video labels
 all_labels = {}
@@ -61,7 +58,6 @@ def load_action(action):
     labels = []
 
     for fn in video_fns:
-        if 'd2' in fn: continue
         #print fn
         d = get_file_descs(fn)
 
@@ -88,6 +84,9 @@ def load_actions(actions):
     #print action_n_descs, len(action_n_descs)
     #print video_n_descs, len(video_n_descs)
     return action_n_descs, video_n_descs, np.vstack(all_descs), all_labels
+
+# load_actions(actions)
+# exit()
 
 ## turn OFH descs from some videos into histograms
 def get_desc_hists(clusters, descs, n_descs):
@@ -139,7 +138,12 @@ def run_test(train_inds, test_inds):
     #     hist = hist.astype(np.float64) / hist.sum()
     #     train_hists.append(hist)
     print 'quantizing...'
-    train_hists = get_desc_hists(clusters, train_descs, train_video_n)
+    f = path.join(savedir, 'train_hists.npy')
+    if path.exists(f):
+        train_hists = np.load(f)
+    else:
+        train_hists = get_desc_hists(clusters, train_descs, train_video_n)
+        np.save(f, train_hists)
 
     # linearly regress for each attribute based on manually produced labels
     print 'training regressors...'
@@ -170,17 +174,25 @@ def run_test(train_inds, test_inds):
     test_class_labels = np.array(test_class_labels)
 
     # find nearer semantic neighbor among two classes
-    words, dists = vq.vq(sem_features, test_class_labels)
+    preds, dists = vq.vq(sem_features, test_class_labels)
+    preds = np.array(test_inds)[preds]
 
-    print words
+    print preds
     print dists
 
-    # display distance to each class for each sample
-    dists = distance.cdist(sem_features, test_class_labels)
-    dists = np.hstack([dists, (dists[:,0] - dists[:,1])[:,None]])
+    # # display distance to each class for each sample
+    # dists = distance.cdist(sem_features, test_class_labels)
+    # dists = np.hstack([dists, (dists[:,0] - dists[:,1])[:,None]])
+    # print dists
 
-    print dists
+    labels = np.hstack([np.array([i]*n) for i, n in zip(test_inds, test_action_n[1:])])
+    print labels
 
+    print labels == preds
+
+    np.save(path.join(savedir, 'preds.npy'), preds)
+    np.save(path.join(savedir, 'labels.npy'), labels)
+    np.save(path.join(savedir, 'classes.npy'), np.array(test_inds))
 
 q = multiprocessing.Queue()
 class QueueManager(BaseManager): pass

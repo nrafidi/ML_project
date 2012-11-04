@@ -12,7 +12,7 @@ if __name__ == '__main__':
     man = QueueManager(('', 5017), authkey='aoeu')
     man.start()
 
-    actions = ['bend', 'boxing', 'handclapping', 'handwaving', 'jogging', 'jump', 'running', 'run', 'side', 'skip', 'walking', 'walk', 'wave1']
+    from actions import actions
 
     res = []
     for inds in LeavePOut(len(actions), 2):
