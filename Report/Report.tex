@@ -106,6 +106,21 @@ Oh Em Gee you guysssss
 At the time of submission, we estimated chance-performance as 50\% correct selections in LTOCV.  However, this may be an under-estimation of chance performance. A more rigorous way to establish statistical significance of LTOCV results is described in section \ref{stats}. 
 Next we plan to explore which semantic features are the most informative for classifying the videos, by evaluating the performance of classification using each feature alone, as described in section \ref{fcomp}.
 Lastly, we plan to do an analysis of how much of the video is necessary for ZSL to succeed. We will run the LTOCV analysis process using progressively larger time segments of the action content sections of the videos to find the minimum amount of time needed. Furthermore, we can look at how the individual features operate on these time scales as well. The full plan is described in section \ref{time}.
+
+\section*{Appendix (Plan of Activities)}
+The following pieces of code from our initial proposal have all been implemented:
+\begin{enumerate}
+\item Something that extracts features from videos (Danny)
+\item Something that maps features to action labels (Nicole)
+\item Leave-two-out cross-validation code on the action set (Yuzi)
+\end{enumerate}
+The following is what we plan to do before the final report (work allocation to be determined):
+\begin{enumerate}
+\item Implement Monte Carlo simulation
+\item Test semantic features one at a time to determine which help with classifying
+\item Segment video and test ZSL performance on those segments
+\end{enumerate}
+
 \bibliographystyle{ieeetr}
 \bibliography{sources}
 
