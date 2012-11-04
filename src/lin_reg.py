@@ -12,14 +12,12 @@ import sklearn.linear_model
 #true, the model will not calculate an intercept
 #alphas =  regularization parameter to iterate over in the CV
 #classifier = A ridge classifier
-def lin_reg_train(features, labels, not_centered):
+def train(features, labels, not_centered=True):
     alphas = np.array([0.1, 1, 10, 100])
-    classifier = sklearn.linear_model.RidgeClassifierCV(alphas, not_centered)
-    classifier.fit(features, labels)
-    return classifier
+    classifier = sklearn.linear_model.RidgeCV(alphas, not_centered)
+    return classifier.fit(features, labels)
 
 #Given a classifier and a feature array, what is the prediction
 #This is probably not necessary
-def lin_reg_test(classifier, features):
+def test(classifier, features):
     return classifier.predict(features)
-    

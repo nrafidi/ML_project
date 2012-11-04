@@ -50,9 +50,9 @@ if __name__ == '__main__':
         diff = cv2.calcOpticalFlowFarneback(f1, f2, flow=None,
                                             pyr_scale=.5, levels=5, winsize=5, iterations=4,
                                             poly_n=5, poly_sigma=1.1, flags=0)
-        #out_frame = np.sqrt((diff**2).sum(2)) * 15
-        print i, diff[...,0].min(), diff[...,0].max()
-        out_frame = diff[...,0] * 10 + 128
+        out_frame = np.sqrt((diff**2).sum(2)) * 15
+        #print i, diff[...,0].min(), diff[...,0].max()
+        #out_frame = diff[...,0] * 10 + 128
 
         out_frame[out_frame < 0] = 0
         out_frame[out_frame > 255] = 255

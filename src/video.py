@@ -58,8 +58,7 @@ def get_interest_points(arr, sigma=1, tau=1, k=5e-4, n_pts=400):
 bins = np.linspace(-4, 4, 33)
 bins[0] = -1e10
 bins[-1] = 1e10
-def compute_descriptors(frames, nbhd=(8,8,5)):
-    pts = get_interest_points(frames)
+def compute_descriptors(frames, pts, nbhd=(8,8,5)):
     flo = flow.get_flow(frames)
 
     nx, ny, nt = nbhd
@@ -95,6 +94,6 @@ if __name__ == '__main__':
     for x, y, t in zip(*pts):
         frames[max(0, x-3):min(frames.shape[0], x+4),
                max(0, y-3):min(frames.shape[1], y+4),
-               max(0, t-2):min(frames.shape[2], t+3)] = 255
+               max(0, t-1):min(frames.shape[2], t+2)] = 255
 
     util.vidwrite(frames, sys.argv[2])

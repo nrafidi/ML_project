@@ -15,8 +15,13 @@ def get_file_descs(fn):
     if path.exists(f):
         descs = np.load(f)
     else:
+        print 'read'
         frames = util.vidread(fn)
-        descs = video.compute_descriptors(frames)
+        print 'pts'
+        pts = video.get_interest_points(frames)
+        print 'descs'
+        descs = video.compute_descriptors(frames, pts)
+        print 'save'
         np.save(f, descs)
 
     return descs
@@ -59,12 +64,10 @@ else:
 
 ## produce histograms for each training video
 count_edges = np.cumsum(n_descs)
-print count_edges, labels
 video_hists = []
 for a, b in zip(count_edges[:-1], count_edges[1:]):
     hist = np.histogram(cluster_inds[a:b], np.arange(dict_size + 1))[0]
     hist = hist.astype(np.float64) / hist.sum()
-    #print hist
     video_hists.append(hist)
 
 video_hists = np.vstack(video_hists)
@@ -78,13 +81,10 @@ for fn in open('test_files.txt'):
 
     hist = np.histogram(words, np.arange(dict_size + 1))[0]
     hist = hist.astype(np.float64) / hist.sum()
-    #print hist
-
-    #print hist.shape, video_hists.shape
 
     neigh_ind = vq.vq(hist[None,:], video_hists)[0][0]
-    print fn
-    print label_set[labels[neigh_ind]]
+    # print fn
+    # print label_set[labels[neigh_ind]]
     pred_label = re.match('[^/]*/([^/]*)', fn).group(1)
 
     m += pred_label == label_set[labels[neigh_ind]]
