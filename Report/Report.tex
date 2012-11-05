@@ -1,4 +1,4 @@
-\documentclass{article} 
+\documentclass{article}
 \usepackage{nips12submit_e,times}
 \usepackage{textcomp}
 \usepackage{graphicx}
@@ -18,62 +18,67 @@
 
 \begin{document}
 \maketitle
+
 \begin{abstract}
-We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead train $k$ regressors to map the videos to an intermediate semantic feature space where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point.  This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. Success of this method is evaluated as leave-two-out cross-validation (LTOCV) performance. We describe several further experiments.
+We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead train $k$ regressors to map the videos to an intermediate semantic feature space where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point. This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. Success of this method is evaluated as leave-two-out cross-validation (LTOCV) performance. We describe several further experiments.
 \end{abstract}
+
 \section{Introduction}
 Zero-shot learning (ZSL) enables one to classify input into classes not yet seen in the training data. It does so by making use of a semantic knowledge base as an intermediate step between the features and classes \cite{Palatucci09}. The main objective of this project is to see whether zero-shot learning yields good performance in human action recognition. Human action recognition is a domain in which there are many possible class labels (actions), making it intractable to provide examples of each action in a training set \cite{Poppe10}. This makes it a good candidate for improvement by zero-shot learning.
 
 \section{Related Work}
+Semantic knowledge bases, both user-defined (e.g. \cite{Vogel07} and \cite{Park04}) and automatically learned (e.g. \cite{Zhao10}), have previously been used as tools for learning and classifying actions. \cite{Vogel07} recognizes classes of outdoor scenes by segmenting an image into tiles and classifying each into a visual concept such as water, foliage, and rocks, and then using the resulting grids to perform classification. In order to describe motion, \cite{Park04} defines a set of operation triplets that each correspond to a way in which specific body parts can move. They then translate a video sequence into a subset of those triplets using domain-specific knowledge. Learning techniques using a bag of visual words approach to the problem such as \cite{Zhao10} often use algorithms to learn the semantics of a lower-level, raw visual vocabulary in order to achieve more accurate classification results.
 
-Semantic knowledge bases both user-defined (e.g. \cite{Vogel07} and \cite{Park04}) and automatically learned (e.g. \cite{Zhao10}) have previously been used as tools for learning and classifying actions. \cite{Vogel07} recognizes classes of outdoor scenes by segmenting an image into tiles and classifying each into a visual concept such as water, foliage, and rocks, and then using the resulting grids to perform classification. In order to describe motion, \cite{Park04} defines a set of operation triplets that each correspond to a way in which specific body parts can move. They then translate a video sequence into a subset of those triplets using domain-specific knowledge. Learning techniques using a bag of visual words approach to the problem such as \cite{Zhao10} often use algorithms to learn the semantics of a lower-level, raw visual vocabulary in order to achieve more accurate classification results.
-
-Similar to our approach, these works all make use of an intermediate step to process low-level visual features into something more meaningful before performing classification. However, these approaches are only applied to the domain of training on a set of actions and classifying video containing those actions. By contrast, our approach makes use of a user-defined semantic knowledge base to enable a classifier to correctly classify actions not present in training data.
+Like our approach, these works all make use of an intermediate step to process low-level visual features into something more meaningful before performing classification. However, these approaches are only applied to the domain of training on a set of actions and classifying video containing those actions. By contrast, our approach makes use of a user-defined semantic knowledge base to enable a classifier to correctly classify actions not present in training data.
 
 \section{Methods}
-
 \subsection{Two-Stage Learning}
-To test the efficacy of ZSL on this problem, we established two steps of classification on the videos in the data sets. First, we found a low-dimensional set of core features that can be used to distinguish the labels (running, walking, etc).  We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys.
+To test the efficacy of ZSL on this problem, we established two steps of classification on the videos in the data sets. First, we found a low-dimensional set of core features that can be used to distinguish the labels (running, walking, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys.
 
 A 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See section \ref{sf} for the complete list of these features.
 
-In the preprocessing stage, we extract low-level features from the videos using the interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means. Any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
+In the preprocessing stage, we extract low-level features from the videos using the spatio-temporal interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means, and any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
 
-In the first stage of the classification process, 12 linear regressors are trained to map from the video features to the semantic features (one regressor per feature).  In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point is the label. See figure \ref{2stage} for a summary.
+In the first stage of the classification process, 12 linear regressors are trained to map from the video features to the semantic features (one regressor per feature). In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary.
 
-A note on the measurement of distance: there are several ways to measure distance in multidimensional space. To be comprehensive, we used three measures of distance: Euclidean, Manhattan, and Cosine distance. Distance is the sum of these three distance measures to the query point.
+%% A note on the measurement of distance: there are several ways to measure distance in multidimensional space. To be comprehensive, we used three measures of distance: Euclidean, Manhattan, and Cosine distance. Distance is the sum of these three distance measures to the query point.
 \begin{figure}[h]
-\centering
-\includegraphics[width=.4\linewidth]{2stagelearning.png}
-\caption{A summary of the two-stage learning process.}
-\label{2stage}
+  \centering
+  \includegraphics[width=.4\linewidth]{2stagelearning.png}
+  \caption{A summary of the two-stage learning process.}
+  \label{2stage}
 \end{figure}
+
 \subsection{Leave-Two-Out Cross-Validation}
 To test the effectiveness of this two-step method over direct video-to-label mappings, we can perform leave-two-out cross-validation, and demonstrate the ZSL classifier’s ability to distinguish between two previously unseen class labels based on their video data, a task that direct mappings are unable to perform.
 
-First, the 12 regressors are trained on all but two of the actions.  then, a video of a previously unseen action is presented. This produces a query point in semantic space.  The distance between the query point and the actual held-out action points is measured, and the point is classified. See figure \ref{ltocv} for a summary.
+First, the 12 regressors are trained on all but two of the actions. Then, a video of a previously unseen action is presented. This produces a query point in semantic space. The distance between the query point and the actual held-out action points is measured, and the point is classified. See figure \ref{ltocv} for a summary.
 
 \begin{figure}[h]
-\centering
-\includegraphics[width = .4\linewidth]{ltocv}
-\caption{A diagram summarizing the leave-two-out cross-validation used to test zero-shot-learning.}
-\label{ltocv}
+  \centering
+  \includegraphics[width = .4\linewidth]{ltocv}
+  \caption{A diagram summarizing the leave-two-out cross-validation used to test zero-shot-learning.}
+  \label{ltocv}
 \end{figure}
+
 \subsection{Statistical Significance}
 Each action has a set of videos associated with it. With each of these videos used as a query point, we can average the success rate and assign a score for each action. The set of action scores can be compared to chance with a paired t-test to establish significance.
 
-Chance performance at this time is estimated at 50\% correct response.  In the final version we will establish chance with a Monte Carlo simulation of the data set, by severing the connection between the videos and their semantic feature labels and shuffling the data. Performance of our two-stage algorithm on this shuffled set approximates chance performance. Ideally this will be close to 50\%, but it may not be due to imperfections/biases in the semantic feature model.
+Chance performance at this time is estimated at 50\% correct response. In the final version we will establish chance with a Monte Carlo simulation of the data set, by severing the connection between the videos and their semantic feature labels and shuffling the data. Performance of our two-stage algorithm on this shuffled set approximates chance performance. Ideally this will be close to 50\%, but it may not be due to imperfections/biases in the semantic feature model.
 \label{stats}
+
 \subsection{Feature Comparison and Selection}
-To see which semantic features yield the biggest advantage in decoding the action, we can test the LTOCV performance using only one semantic feature in the intermediate set. We can use the knowledge that some features perform better than others to improve overall LTOCV performance.  We will feature select over the training fold of the cross-validation, and then use those selected values to evaluate the held out two actions. This will allow us to see if the features that do not do well alone somehow combine to yield good performance, or if they are noise.
+To see which semantic features yield the biggest advantage in decoding the action, we can test the LTOCV performance using only one semantic feature in the intermediate set. We can use the knowledge that some features perform better than others to improve overall LTOCV performance. We will feature select over the training fold of the cross-validation, and then use those selected values to evaluate the held out two actions. This will allow us to see if the features that do not do well alone somehow combine to yield good performance, or if they are noise.
 \label{fcomp}
+
 \subsection{Time Dependency}
-What is the minimum length of video time needed before we can decode actions with ZSL? Additionally, which features require more or less video time before they can be reliably decoded? In general, for most applications, the less video time needed for the decoder, the better.  The semantic feature-level analysis of this phenomenon can help to further refine the semantic model. To answer these questions, we will run our previous experiments with progressively larger action segments from the original videos, and track performance.
+What is the minimum length of video time needed before we can decode actions with ZSL? Additionally, which features require more or less video time before they can be reliably decoded? In general, for most applications, the less video time needed for the decoder, the better. The semantic feature-level analysis of this phenomenon can help to further refine the semantic model. To answer these questions, we will run our previous experiments with progressively larger action segments from the original videos, and track performance.
 \label{time}
+
 \subsection{Materials}
 \subsubsection{Data Sets}
-Data was taken from the following two data sets: KTH, (http://www.nada.kth.se/cvap/actions/) and Weizmann (http://www.wisdom.weizmann.ac.il/\texttildelow
-vision/SpaceTimeActions.html)
+Data was taken from the following two data sets: KTH \cite{kth} and Weizmann \cite{weizmann}. Both datasets contain videos for walking; these were combined and treated as a single class. The same applies to running.
+
 \subsubsection{Semantic Features}
 \label{sf}
 The following are the semantic features that we selected, with values and explanations:
@@ -101,17 +106,25 @@ $Limbs$: (4 features, each Discrete 1-5) speed of each of the four limbs.
 This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}.
 
 \section{Preliminary Results} %Will later be Results
-For each class, we measured the average rate of true positives of the classification pipeline on that class, across all trials when that class was one of the left-out ones. Each left-out class was represented in semantic space by the vector of modes of each feature, taken over the manually-created labels for that class. The running videos from both datasets were combined into one class, as were the walking videos.
+For each class, we measured the average rate of true positives of the classification pipeline on that class, across all trials when that class was one of the left-out ones. Each left-out class was represented in semantic space by the vector of modes of each feature, taken over the manually-created labels for that class.
 
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
-  bend &  boxing & handclapping & handwaving & jogging & jump  & running &  side  & skip & walking & wave1 \\\hline
-  0.578 & 0.806  & .898         & 0.998      & 0.996  &  0.733 & 0.631   &  0.944 & .620 & .888    & .544 \\\hline
-\end{tabular}
+\begin{figure}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
+      bend &  boxing & handclapping & handwaving & jogging & jump\\\hline
+      0.578 & 0.806  & .898         & 0.998      & 0.996  &  0.733\\\hline\cline{1-5}
+      running &  side  & skip & walking & wave1 \\\cline{1-5}
+      0.631   &  0.944 & .620 & .888    & .544 \\\cline{1-5}
+    \end{tabular}
+  \end{center}
+\end{figure}
 
 \section{Future Work} %Will later be Conclusion
-At the time of submission, we estimated chance-performance as 50\% correct selections in LTOCV.  However, this may be an under-estimation of chance performance. A more rigorous way to establish statistical significance of LTOCV results is described in section \ref{stats}. 
+At the time of submission, we estimated chance performance as 50\% correct selections in LTOCV. However, this may be an under-estimation of chance performance. A more rigorous way to establish statistical significance of LTOCV results is described in section \ref{stats}.
+
 Next we plan to explore which semantic features are the most informative for classifying the videos, by evaluating the performance of classification using each feature alone, as described in section \ref{fcomp}.
-Lastly, we plan to do an analysis of how much of the video is necessary for ZSL to succeed. We will run the LTOCV analysis process using progressively larger time segments of the action content sections of the videos to find the minimum amount of time needed. Furthermore, we can look at how the individual features operate on these time scales as well. The full plan is described in section \ref{time}.
+
+Lastly, we plan to do an analysis of how much of the video is necessary for ZSL to succeed. We will run the LTOCV analysis process using progressively larger time segments of the action content sections of the videos to find the minimum amount of time needed to classify a video. Furthermore, we can look at how the individual features operate on these time scales as well. The full plan is described in section \ref{time}.
 
 \section*{Appendix (Plan of Activities)}
 The following pieces of code from our initial proposal have all been implemented:
