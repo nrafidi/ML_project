@@ -101,11 +101,11 @@ $Limbs$: (4 features, each Discrete 1-5) speed of each of the four limbs.
 This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}.
 
 \section{Preliminary Results} %Will later be Results
-For each class, we measured the average rate of true positives of the classification pipeline on that class, across all trials when that class was one of the left-out ones. Each left-out class was represented in semantic space by the vector of modes of each feature, taken over the manually-created labels for that class.
+For each class, we measured the average rate of true positives of the classification pipeline on that class, across all trials when that class was one of the left-out ones. Each left-out class was represented in semantic space by the vector of modes of each feature, taken over the manually-created labels for that class. The running videos from both datasets were combined into one class, as were the walking videos.
 
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline
-  bend &  boxing & handclapping & handwaving & jogging &  jump &   running &  run & side &   skip &  walking & walk &   wave1 \\\hline
-   0.583 &  0.838 &   0.915 &   0.998 &   0.939 & 0.741 & 0.611 &   0.625 &  0.917 & 0.592& 0.772 & 0.850 & 0.602 \\\hline
+  bend &  boxing & handclapping & handwaving & jogging & jump  & running &  side  & skip & walking & wave1 \\\hline
+  0.578 & 0.806  & .898         & 0.998      & 0.996  &  0.733 & 0.631   &  0.944 & .620 & .888    & .544 \\\hline
 \end{tabular}
 
 \section{Future Work} %Will later be Conclusion
