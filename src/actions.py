@@ -4,3 +4,4 @@ actions = np.array(['bend', 'boxing', 'handclapping', 'jack', 'jogging', 'jump',
 # TODO wave2 jack
 actions = np.array(['bend', 'boxing', 'handclapping', 'handwaving', 'jogging', 'jump', 'running', 'run', 'side', 'skip', 'walking', 'walk', 'wave1'])
 # handwaving??
+actions = np.array(['all-run', 'all-walk', 'bend', 'boxing', 'handclapping', 'handwaving', 'jogging', 'jump', 'side', 'skip', 'wave1'])

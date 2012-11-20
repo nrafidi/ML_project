@@ -107,7 +107,7 @@ def get_desc_hists(clusters, descs, n_descs):
 
     return np.vstack(hists)
 
-## takes indices into actions array, returns trained linear regressor
+## takes indices into actions array, returns codebook and trained linear regressor
 def train_classifier(train_inds, dict_size=300, shuffle=False):
     # load OFH descriptors from training videos from all-but-two classes
     train_action_n, train_video_n, train_descs, train_labels = load_actions(actions[train_inds])
@@ -139,9 +139,9 @@ def train_classifier(train_inds, dict_size=300, shuffle=False):
     print 'training regressors...'
     cls = lin_reg.train(train_hists, train_labels)
 
-    return cls
+    return clusters, cls
 
-def test_classifier(cls):
+def test_classifier(test_inds, cls, clusters):
     # load OFH descriptors from test videos from two classes
     test_action_n, test_video_n, test_descs, test_labels = load_actions(actions[test_inds])
 
@@ -197,9 +197,9 @@ def run_test(train_inds, test_inds):
     except OSError:
         pass
 
-    cls = train_classifier(train_inds)
+    clusters, cls = train_classifier(train_inds, shuffle=True)
 
-    test_classifier(cls)
+    test_classifier(test_inds, cls, clusters)
 
 if __name__ == '__main__':
     q = multiprocessing.Queue()

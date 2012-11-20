@@ -1,5 +1,6 @@
 import os
 from os import path
+import sys
 
 import numpy as np
 
@@ -26,11 +27,11 @@ for t in sorted(os.listdir('save')):
         right = correct.sum()
         count = correct.size
 
-        #print '%s: %f (%d/%d)' % (actions[c], right / float(count), right, count)
+        print '%s: %f (%d/%d)' % (actions[c], right / float(count), right, count)
         class_scores[c, 0] += right
         class_scores[c, 1] += count
 
-    #print
+    print
 
 for (a, (x, y)) in zip(actions, class_scores):
-    print '%s & %.3f\\\\' % (a, x / y)
+    print >>sys.stderr, '%s & %.3f\\\\' % (a, x / y)

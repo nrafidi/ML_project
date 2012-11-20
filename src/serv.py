@@ -4,7 +4,6 @@ import time
 
 from sklearn.cross_validation import LeavePOut
 
-
 if __name__ == '__main__':
     q = multiprocessing.Queue()
     class QueueManager(BaseManager): pass
@@ -14,13 +13,8 @@ if __name__ == '__main__':
 
     from actions import actions
 
-    res = []
     for inds in LeavePOut(len(actions), 2):
         q.put(inds)
-        #res.append(pool.apply_async(run_test, args=inds))
-
-    # for r in res:
-    #     r.get()
 
     while q.qsize() > 0:
         print q.qsize()
