@@ -4,6 +4,7 @@ import multiprocessing
 from multiprocessing.managers import BaseManager
 import os
 from os import path
+import random
 
 import numpy as np
 from scipy.spatial import distance
@@ -83,6 +84,11 @@ def load_actions(actions):
     #print actions
     #print action_n_descs, len(action_n_descs)
     #print video_n_descs, len(video_n_descs)
+
+    ## action_n_descs: list of number of videos for each action
+    ## video_n_descs: list of number of descriptors for each video
+    ## all_descs: matrix of all descriptors
+    ## all_labels: list of semantic feature list for each loaded video
     return action_n_descs, video_n_descs, np.vstack(all_descs), all_labels
 
 # load_actions(actions)
@@ -101,25 +107,12 @@ def get_desc_hists(clusters, descs, n_descs):
 
     return np.vstack(hists)
 
-np.set_printoptions(precision=2)
-
-def run_test(train_inds, test_inds):
-    print 'train actions:', actions[train_inds]
-    print 'test actions:', actions[test_inds]
-
-    savedir = path.join('save', '_'.join(actions[test_inds]))
-    try:
-        os.makedirs(savedir)
-    except OSError:
-        pass
-
-    #### TRAIN
-
+## takes indices into actions array, returns trained linear regressor
+def train_classifier(train_inds, dict_size=300, shuffle=False):
     # load OFH descriptors from training videos from all-but-two classes
     train_action_n, train_video_n, train_descs, train_labels = load_actions(actions[train_inds])
 
     # cluster and quantize to produce BoW descriptors
-    dict_size = 300
     print 'clustering...'
     print 'train_descs:', train_descs.shape
     if path.exists(path.join(savedir, 'clusters.npy')):
@@ -130,13 +123,10 @@ def run_test(train_inds, test_inds):
         np.save(path.join(savedir, 'clusters.npy'), clusters)
         np.save(path.join(savedir, 'cluster_inds.npy'), cluster_inds)
 
+    if shuffle:
+        random.shuffle(train_labels)
+
     # produce quantized histograms for each training video
-    # count_edges = np.cumsum(n_descs)
-    # train_hists = []
-    # for a, b in zip(count_edges[:-1], count_edges[1:]):
-    #     hist = np.histogram(cluster_inds[a:b], np.arange(dict_size + 1))[0]
-    #     hist = hist.astype(np.float64) / hist.sum()
-    #     train_hists.append(hist)
     print 'quantizing...'
     f = path.join(savedir, 'train_hists.npy')
     if path.exists(f):
@@ -149,7 +139,9 @@ def run_test(train_inds, test_inds):
     print 'training regressors...'
     cls = lin_reg.train(train_hists, train_labels)
 
-    #### TEST
+    return cls
+
+def test_classifier(cls):
     # load OFH descriptors from test videos from two classes
     test_action_n, test_video_n, test_descs, test_labels = load_actions(actions[test_inds])
 
@@ -194,14 +186,31 @@ def run_test(train_inds, test_inds):
     np.save(path.join(savedir, 'labels.npy'), labels)
     np.save(path.join(savedir, 'classes.npy'), np.array(test_inds))
 
-q = multiprocessing.Queue()
-class QueueManager(BaseManager): pass
-QueueManager.register('get_queue', lambda: q)
-man = QueueManager(('', 5017), authkey='aoeu')
-man.connect()
+def run_test(train_inds, test_inds):
+    print 'train actions:', actions[train_inds]
+    print 'test actions:', actions[test_inds]
 
-q = man.get_queue()
-while True:
-    print 'getting inds...'
-    inds = q.get(10)
-    run_test(*inds)
+    global savedir
+    savedir = path.join('save', '_'.join(actions[test_inds]))
+    try:
+        os.makedirs(savedir)
+    except OSError:
+        pass
+
+    cls = train_classifier(train_inds)
+
+    test_classifier(cls)
+
+if __name__ == '__main__':
+    q = multiprocessing.Queue()
+    class QueueManager(BaseManager): pass
+    QueueManager.register('get_queue', lambda: q)
+    man = QueueManager(('', 5017), authkey='aoeu')
+    man.connect()
+
+    q = man.get_queue()
+    while True:
+        np.set_printoptions(precision=2)
+        print 'getting inds...'
+        inds = q.get(10)
+        run_test(*inds)
