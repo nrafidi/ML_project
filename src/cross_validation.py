@@ -5,6 +5,7 @@ from multiprocessing.managers import BaseManager
 import os
 from os import path
 import random
+import signal
 
 import numpy as np
 from scipy.spatial import distance
@@ -186,6 +187,8 @@ def test_classifier(test_inds, cls, clusters):
     np.save(path.join(savedir, 'labels.npy'), labels)
     np.save(path.join(savedir, 'classes.npy'), np.array(test_inds))
 
+    return preds, labels, test_inds
+
 def run_test(train_inds, test_inds):
     print 'train actions:', actions[train_inds]
     print 'test actions:', actions[test_inds]
@@ -199,18 +202,36 @@ def run_test(train_inds, test_inds):
 
     clusters, cls = train_classifier(train_inds, shuffle=True)
 
-    test_classifier(test_inds, cls, clusters)
+    return test_classifier(test_inds, cls, clusters)
 
 if __name__ == '__main__':
-    q = multiprocessing.Queue()
-    class QueueManager(BaseManager): pass
-    QueueManager.register('get_queue', lambda: q)
-    man = QueueManager(('', 5017), authkey='aoeu')
-    man.connect()
+    def sig(*args): raise socket.error('timed out')
+    signal.signal(signal.SIGALRM, sig)
 
-    q = man.get_queue()
     while True:
-        np.set_printoptions(precision=2)
-        print 'getting inds...'
-        inds = q.get(10)
-        run_test(*inds)
+        class QueueManager(BaseManager): pass
+        QueueManager.register('get_in_queue', lambda: in_q)
+        QueueManager.register('get_out_queue', lambda: out_q)
+        man = QueueManager(('', 5017), authkey='aoeu')
+
+        print 'connecting...'
+        signal.alarm(5)
+        try:
+            man.connect()
+        except socket.error:
+            print 'timed out'
+            continue
+        signal.alarm(0)
+
+        in_q = man.get_in_queue()
+        out_q = man.get_out_queue()
+        while True:
+            np.set_printoptions(precision=2)
+            print 'getting inds...'
+            try:
+                inds = in_q.get(2)
+            except (EOFError, IOError):
+                print 'end'
+                break
+
+            out_q.put(run_test(*inds))
