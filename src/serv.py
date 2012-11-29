@@ -26,6 +26,7 @@ if __name__ == '__main__':
 
     print >>sys.stderr, 'queued %d tasks...' % n
 
+    all_scores = np.zeros((actions.size, actions.size))
     class_scores = np.zeros((actions.size, 2))
     for i in range(n):
         preds, labels, classes = out_q.get()
@@ -37,10 +38,15 @@ if __name__ == '__main__':
 
             right = correct.sum()
             count = correct.size
+            score = right / float(count)
 
-            #print '%s: %f (%d/%d)' % (actions[c], right / float(count), right, count)
+            #print '%s: %f (%d/%d)' % (actions[c], score, right, count)
             class_scores[c, 0] += right
             class_scores[c, 1] += count
+
+            # assume that there are two classes
+            other = classes[classes != c][0]
+            all_scores[c, other] = score
 
         print >>sys.stderr, i
 
@@ -48,4 +54,7 @@ if __name__ == '__main__':
     #     print '%s & %.3f\\\\' % (a, x / y)
 
     print ','.join('%.4f' % (x / y) for x, y in class_scores)
+
+    with open('res/%d.txt' % int(time.time()), 'w') as out:
+        print >>out, '\n'.join(','.join(map(str, r)) for r in all_scores)
     man.shutdown()

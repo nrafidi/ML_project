@@ -6,6 +6,7 @@ import os
 from os import path
 import random
 import signal
+import socket
 
 import numpy as np
 from scipy.spatial import distance
