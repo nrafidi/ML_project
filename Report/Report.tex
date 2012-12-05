@@ -33,13 +33,13 @@ Like our approach, these works all make use of an intermediate step to process l
 
 \section{Methods}
 \subsection{Zero-Shot Learning}
-Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the semantic space. These training examples may not contain examples of all possible labels. The second stage is a nearest neighbor classification - all labels (including those absent at training) are represented as points in the semantic space.  Classification is done by applying the learned regressor and then finding the closest label point in the semantic space.  Below we describe how we adapted this to the task of human action recognition.
+Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the semantic space. These training examples may not contain examples of all possible labels. The second stage is a nearest neighbor classification --- all labels (including those absent at training) are represented as points in the semantic space.  Classification is done by applying the learned regressor and then finding the closest label point in the semantic space.  Below we describe how we adapted this to the task of human action recognition.
 
 We found a low-dimensional set of features to distinguish the labels (run, walk, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys, but our feature set works reasonably well as a proof-of-concept. Thus, in our model, a 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See section \ref{sf} for the complete list of these features.
 
 In the preprocessing stage, we extract low-level features from the videos using the spatio-temporal interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means, and any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
 
-In the first stage of the classification process, 12 linear regressors are trained to map from the video features to the semantic features (one regressor per feature), using L2 regularized linear regression (CHECK). In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
+In the first stage of the classification process, a linear regressor is trained for each semantic feature to map from the low-level features to that semantic feature, using L2 regularized linear regression. The regularization parameters are chosen independently for each feature, using cross-validation. In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
 
 \begin{figure}[h]
   \centering
@@ -80,7 +80,7 @@ A more difficult task than leave-two-out cross-validation would be to compare th
 accuracy = 1 - \frac{r}{T}
 \end{equation}
 
-Where $r$ is the rank of the true label and $T$ is the total number of action labels.  This can be thought of as a measurement of the percentage of the other labels that are ranked below the true label. A score of 1 is perfect (CHECK). The experiment is summarized in Figure \ref{ranking}.
+Where $r$ is the rank of the true label (with $0$ representing the first rank) and $T$ is the total number of action labels.  This can be thought of as a measurement of the fraction of the labels that are ranked below the true label. A score of 1 is perfect. The experiment is summarized in Figure \ref{ranking}.
 
 \begin{figure}[h]
   \centering
@@ -147,23 +147,23 @@ Data was taken from the following two data sets: KTH \cite{kth} and Weizmann \ci
 The following are the semantic features that we selected, with values and explanations:
 \begin{enumerate}
 \item
-$Coord\_arms$: Coordination of the arms. (Discrete 0-2) 0 is no coordination, 1 is coordination, 2 is anti-coordination.
+$Coord\_arms$: Coordination of the arms. (Discrete 0--2) 0 is no coordination, 1 is coordination, 2 is anti-coordination.
 \item
-$Coord\_legs$: Coordination of the legs. (Discrete 0-2) 0 is none, 1 is coordination, 2 is anti-coordination.
+$Coord\_legs$: Coordination of the legs. (Discrete 0--2) 0 is none, 1 is coordination, 2 is anti-coordination.
 \item
 $Torso$: (Binary) 1 if torso is moving relative to the rest of the body.
 \item
-$Orient\_torso$: : (Discrete 0-2) 0 is that torso orientation is unrelated to the motion, 1 is that the torso is canonically parallel to motion, 2 is that the torso is canonically perpendicular to motion.
+$Orient\_torso$: : (Discrete 0--2) 0 is that torso orientation is unrelated to the motion, 1 is that the torso is canonically parallel to motion, 2 is that the torso is canonically perpendicular to motion.
 \item
-$Vert$: (Discrete 0-5) amount of vertical displacement of the center of mass.
+$Vert$: (Discrete 0--5) amount of vertical displacement of the center of mass.
 \item
 $Horiz$: (Binary) 1 if there is whole body horizontal displacement.
 \item
 $Hand$: Hand location. (Binary) 1 if the hand is lower than the center of mass, 0 if it is higher.
 \item
-$Speed$: (Discrete 0-5) speed of center of mass.
+$Speed$: (Discrete 0--5) speed of center of mass.
 \item
-$Limbs$: (4 features, each Discrete 1-5) speed of each of the four limbs.
+$Limbs$: (4 features, each Discrete 1--5) speed of each of the four limbs.
 \end{enumerate}
 \subsubsection{Coding Libraries}
 This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}. Figures generated with MATLAB \cite{matlab}.
@@ -182,7 +182,7 @@ Leave-two-out cross-validation performance was significantly above chance for mo
 
 Chance performance may seem high for two of the actions. This can be attributed to flaws in the semantic feature space, as there are some actions that, by nature of their location in the space, have a higher tendency to be selected.
 
-Rank performance was also very significantly above chance for most actions, as well as for performance averaged across action. See Figure \ref{rankplot}. 
+Rank performance was also very significantly above chance for most actions, as well as for performance averaged across action. See Figure \ref{rankplot}.
 
 \begin{figure}[h]
   \centering
@@ -216,7 +216,7 @@ We also tried leaving out families of features, and the results are shown in Fig
 \end{figure}
 
 \section{Conclusion}
-Our results demonstrate a proof-of-concept for zero shot learning in the domain of human action recognition from video. This technique allows extrapolation from labels in the training data set, so that we can classify videos with labels we have not yet seen.  Performance tended to vary depending on semantic feature and action, but was significantly better than noise in most cases. With a better-developed semantic feature base, we could see an improvement in results.
+Our results demonstrate a proof-of-concept for zero-shot learning in the domain of human action recognition from video. This technique allows extrapolation from labels in the training data set, so that we can classify videos with labels we have not yet seen.  Performance tended to vary depending on semantic feature and action, but was significantly better than noise in most cases. With a better-developed semantic feature base, we could see an improvement in results.
 
 \bibliographystyle{ieeetr}
 \bibliography{sources}
