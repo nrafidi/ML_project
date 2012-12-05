@@ -20,7 +20,7 @@
 \maketitle
 
 \begin{abstract}
-We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition from video. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead define a set of semantic features using knowledge of human actions, and train regressors to map the videos to an intermediate semantic feature space, where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point. This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. We demonstrate the efficacy of this technique with several experiments, and conduct a preliminary analysis of our semantic feature set.
+We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition from video. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead define a set of semantic features using knowledge of human actions, and train regressors to map the videos to an intermediate semantic feature space, where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point. This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. We demonstrate the efficacy of this technique with several experiments, and conduct a preliminary analysis of our semantic features.
 \end{abstract}
 
 \section{Introduction}
@@ -33,9 +33,9 @@ Like our approach, these works all make use of an intermediate step to process l
 
 \section{Methods}
 \subsection{Zero-Shot Learning}
-Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the intermediate semantic space. These training examples may or may not contain examples of all possible labels. The second stage is a nearest neighbor classification - all labels (including those absent at training) are represented as points in the semantic space.  Classification of a query is done by applying the learned regressor and then finding the label point that is closest in the semantic space.  Below we describe how we adapted this to the task of human action recognition.
+Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the semantic space. These training examples may not contain examples of all possible labels. The second stage is a nearest neighbor classification - all labels (including those absent at training) are represented as points in the semantic space.  Classification is done by applying the learned regressor and then finding the closest label point in the semantic space.  Below we describe how we adapted this to the task of human action recognition.
 
-We found a low-dimensional set of core features that can be used to distinguish the labels (run, walk, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys, but our feature set works reasonably well as a proof-of-concept. Thus, in our model, a 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See section \ref{sf} for the complete list of these features.
+We found a low-dimensional set of features to distinguish the labels (run, walk, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys, but our feature set works reasonably well as a proof-of-concept. Thus, in our model, a 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See section \ref{sf} for the complete list of these features.
 
 In the preprocessing stage, we extract low-level features from the videos using the spatio-temporal interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means, and any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
 
@@ -43,8 +43,8 @@ In the first stage of the classification process, 12 linear regressors are train
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.4\linewidth]{2stagelearning.png}
-  \caption{A summary of the two-stage learning process.}
+  \includegraphics[width=.5\linewidth]{2stagelearning.png}
+  \caption{A summary of the two-stage learning process. The low-level video features are optical flow hisogram descriptor clusters. We learn one regressors that map the low-level features to a dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
   \label{2stage}
 \end{figure}
 
@@ -55,18 +55,20 @@ First, the 12 regressors are trained on all but two of the actions. Then, a vide
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width = .4\linewidth]{ltocv}
-  \caption{A diagram summarizing the leave-two-out cross-validation used to test zero-shot-learning. The classifier is able to tell whether a video is of skipping or jogging, despite having never seen an example of either action.}
+  \includegraphics[width = .45\linewidth]{ltocv}
+  \caption{A diagram summarizing the leave-two-out cross-validation used to test zero-shot-learning. The classifier is able to tell whether a video is of skipping or jogging, despite having never seen an example of either action. We rate performance on a per-action basis as the percent of videos correctly classified for every possible two vs two pairing for that action.}
   \label{ltocv}
 \end{figure}
 
-For each action label, we were able to produce a distribution of percent of videos correctly classified versus opposing action. So, the results have this structure:
+For each action label, we were able to produce a distribution of percent of videos correctly classified versus opposing action. So, the results have this structure (numbers invented for the sake of example):
 
 \begin{table}[h]
 \centering
 \begin{tabular}{c|c|c|c|c}
 Action/Action & Run & Walk & Wave & ... \\ \hline
-Run & ---- & .70 & .90 & ... \\
+Run & ---- & .70 & .90 & ... \\ \hline
+Walk & .80 & ---- & .95 & ... \\ \hline
+Wave & .90 & .99 & ---- & ... \\
 \end{tabular}
 \end{table}
 
@@ -78,12 +80,12 @@ A more difficult task than leave-two-out cross-validation would be to compare th
 accuracy = 1 - \frac{r}{T}
 \end{equation}
 
-Where $r$ is the rank of the true label and $T$ is the total number of action labels.  A score of 1 is perfect (CHECK). The experiment is summarized in Figure \ref{ranking}.
+Where $r$ is the rank of the true label and $T$ is the total number of action labels.  This can be thought of as a measurement of the percentage of the other labels that are ranked below the true label. A score of 1 is perfect (CHECK). The experiment is summarized in Figure \ref{ranking}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width = .4\linewidth]{ranking}
-  \caption{A diagram summarizing the rank test. The classifier ranks the potential action labels in order of nearness to the query point.}
+  \includegraphics[width = .45\linewidth]{ranking}
+  \caption{A diagram summarizing the rank test. The classifier ranks the potential action labels in order of nearness to the query point. Performance is measured with respect to the position of the true label.}
   \label{ranking}
 \end{figure}
 \label{rank}
@@ -97,8 +99,8 @@ In the first version of the experiment, we tried leaving each semantic feature o
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width = .4\linewidth]{features}
-  \caption{A diagram summarizing the feature comparison test. Each semantic feature was held out in turn and performance re-assessed.}
+  \includegraphics[width = .45\linewidth]{features}
+  \caption{A diagram summarizing the feature comparison test. Each semantic feature was held out in turn and performance re-assessed using the method in Section \ref{ltocv}.}
   \label{feature}
 \end{figure}
 
@@ -113,6 +115,8 @@ Center of Mass & Torso motion and orientation, Horizontal and vertical displacem
 Hand & Hand location \\ \hline
 Speed & Speed of center of mass, and speed of each limb \\
 \end{tabular}
+\label{featgrp}
+\caption{Semantic feature groups left out, and features contained in those groups.}
 \end{table}
 
 For each held out feature or group of features, we had a distribution of average leave-two-out cross-validation performance across actions.  We compared this to the distribution found when using all features.
@@ -126,17 +130,17 @@ We establish chance with a permutation test. We sever the connection between the
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.4\linewidth]{shuffle}
-  \caption{A summary of the two-stage learning process.}
+  \includegraphics[width=.45\linewidth]{shuffle}
+  \caption{Illustration of the permuting process. The action labels for each video in the training set were shuffled. Crucially, the action label semantic point representations were maintained so as to make a fair assessment.}
   \label{st}
 \end{figure}
 
-Performance of our two-stage algorithm in the leave-two-out cross-validation and rank experiments on this shuffled set approximates chance performance. Performance was measured for 1000 permutations and averaged across permutations (CHECK).
+Performance of our two-stage algorithm in the leave-two-out cross-validation and rank experiments on this shuffled set approximates chance performance. Performance was measured for 250 trials in the leave-two-out cross-validation performance experiment, and 1000 in the rank experiment.
 \label{stats}
 
 \subsection{Materials}
 \subsubsection{Data Sets}
-Data was taken from the following two data sets: KTH \cite{kth} and Weizmann \cite{weizmann}. Both datasets contain videos for walking; these were combined and treated as a single class. The same applies to running.  When training and testing, however, we balanced the training set by ensuring that each action was represented by the same number of videos. Unfortunately, due to time constraints we were only able to randomize this balancing process for one of our experiments (leave-two-out cross-validation). For the other experiments we worked with a fixed subset of the videos.
+Data was taken from the following two data sets: KTH \cite{kth} and Weizmann \cite{weizmann}. Both datasets contain videos for walking; these were combined and treated as a single class. The same applies to running.  When training and testing, however, we balanced the training set by ensuring that each action was represented by the same number of videos (10). Unfortunately, due to time constraints we were only able to randomize this balancing process for the leave-two-out cross-validation experiment (250 trials), and the permuted portion of the rank experiment (1000 trials). For the feature analysis experiments we worked with the complete set of videos (110).
 
 \subsubsection{Semantic Features}
 \label{sf}
@@ -162,17 +166,17 @@ $Speed$: (Discrete 0-5) speed of center of mass.
 $Limbs$: (4 features, each Discrete 1-5) speed of each of the four limbs.
 \end{enumerate}
 \subsubsection{Coding Libraries}
-This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}. Figures generated with MATLAB (CITE).
+This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}. Figures generated with MATLAB \cite{matlab}.
 
 \section{Results}
 
 \subsection{Leave-Two-Out Cross-Validation and Rank Performance}
-Leave-two-out cross-validation performance was statistically significantly above chance for most actions, as summarized in Figure \ref{ltocvplot}.  Performance averaged across actions was also statistically significant.
+Leave-two-out cross-validation performance was significantly above chance for most actions, as summarized in Figure \ref{ltocvplot}.  Performance averaged across actions was also statistically significant.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{ltocv_snap_new}
-  \caption{Results when comparing leave-two-out cross-validation (LTOCV) performance on the data set with labels intact, and on the data set with labels permuted.}
+  \includegraphics[width=.9\linewidth]{ltocv_snap_new}
+  \caption{Results when comparing leave-two-out cross-validation (LTOCV) performance on the data set with labels intact (blue), and on the data set with labels permuted (green). Error bars are $\pm$ the standard deviation of the distribution of two vs two pairs.}
   \label{ltocvplot}
 \end{figure}
 
@@ -182,30 +186,32 @@ Rank performance was also very significantly above chance for most actions, as w
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{rank_snap_new}
-  \caption{A summary of the two-stage learning process.}
+  \includegraphics[width=.9\linewidth]{rank_snap_new}
+  \caption{Rank test performance for the original (blue) and permuted (green) versions of the data set.  Error bars are $\pm$ the standard deviation of the distribution of rank scores for each video of a given action.}
   \label{rankplot}
 \end{figure}
 
-Unsurprisingly, actions that had high chance performance in leave-two-out cross-validation again had relatively high chance performance in this setting. An additional line of reasoning that can explain these results is the non-Euclidean nature of the semantic space. While using Euclidean distance clearly works reasonably well, more sophisticated notions of classification in this domain might yield better performance.
+The variance of these results are noticeably lower than those of the leave-two-out cross-validation results, perhaps due to the nature of the score (there is a strict bound on the variance of a distribution of rank scores).  It also speaks to the consistency of the model that videos from the same action label tend to produce the same rank, even if that rank is not correct.
+
+Unsurprisingly, actions that had high chance performance in leave-two-out cross-validation again had relatively high chance performance in this setting. An additional line of reasoning that can explain these results is the non-Euclidean nature of the semantic space. While using Euclidean distance clearly works reasonably well, more sophisticated notions of classification in this domain might yield better results in the form of greater difference between true and chance performance.
 
 \subsection{Feature Comparison}
 
-As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, expecting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it. Without that feature, waving is represented by the zero vector (CHECK).
+As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, expecting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{feature_snap}
-  \caption{A summary of the two-stage learning process.}
+  \includegraphics[width=.9\linewidth]{feature_snap}
+  \caption{Performance of leave-two-out cross-validation versus held-out semantic feature. Average performance of the complete model is given by the dashed line. Error bars are $\pm$ standard deviation of the distribution over two vs two pairs.}
   \label{featplot}
 \end{figure}
 
-We also tried leaving out families of features, and the results are shown in Figure \ref{featgplot}.  This produced a marked difference in performance. It seems our semantic features that ... have the largest effect.
+We also tried leaving out families of features, and the results are shown in Figure \ref{featgplot}.  This too did not affect performance significantly. It would appear that even removing highly correlated groups of features does not affect the classification results.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{featuregrp_snap}
-  \caption{A summary of the two-stage learning process.}
+  \includegraphics[width=.9\linewidth]{featuregrp_snap}
+  \caption{Performance of leave-two-out cross-validation versus held-out semantic feature group (see Table \ref{featgrp}). Average performance of the complete model is given by the dashed line. Error bars are $\pm$ standard deviation of the distribution over two vs two pairs.}
   \label{featgplot}
 \end{figure}
 
