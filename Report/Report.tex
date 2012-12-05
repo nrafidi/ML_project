@@ -122,7 +122,16 @@ For each held out feature or group of features, we had a distribution of average
 \subsection{Statistical Significance}
 Each experiment generates a distribution of performance scores. The set of scores can be compared to chance with a paired t-test to establish significance.
 
-We establish chance with a permutation test. We sever the connection between the videos and their semantic feature labels and shuffling the data. Performance of our two-stage algorithm in the leave-two-out cross-validation and rank experiments on this shuffled set approximates chance performance. Performance was measured for 1000 permutations and averaged across permutations. Ideally this will be close to 50\%, but it may not be due to imperfections/biases in the semantic feature model.
+We establish chance with a permutation test. We sever the connection between the videos and their semantic feature labels and shuffling the data. The semantic feature space points representing the acitons remained tied to their actions. See Figure \ref{st} for an illustration.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.4\linewidth]{shuffle}
+  \caption{A summary of the two-stage learning process.}
+  \label{st}
+\end{figure}
+
+Performance of our two-stage algorithm in the leave-two-out cross-validation and rank experiments on this shuffled set approximates chance performance. Performance was measured for 1000 permutations and averaged across permutations (CHECK).
 \label{stats}
 
 \subsection{Materials}
@@ -160,9 +169,23 @@ This project was coded using Python. Basic libraries used include, SciPy \cite{s
 \subsection{Leave-Two-Out Cross-Validation and Rank Performance}
 Leave-two-out cross-validation performance was statistically significantly above chance for most actions, as summarized in Figure \ref{ltocvplot}.  Performance averaged across actions was also statistically significant.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{ltocv_snap_new}
+  \caption{Results when comparing leave-two-out cross-validation (LTOCV) performance on the data set with labels intact, and on the data set with labels permuted.}
+  \label{ltocvplot}
+\end{figure}
+
 Chance performance may seem high for two of the actions. This can be attributed to flaws in the semantic feature space, as there are some actions that, by nature of their location in the space, have a higher tendency to be selected.
 
 Rank performance was also very significantly above chance for most actions, as well as for performance averaged across action. See Figure \ref{rankplot}. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{rank_snap_new}
+  \caption{A summary of the two-stage learning process.}
+  \label{rankplot}
+\end{figure}
 
 Unsurprisingly, actions that had high chance performance in leave-two-out cross-validation again had relatively high chance performance in this setting. An additional line of reasoning that can explain these results is the non-Euclidean nature of the semantic space. While using Euclidean distance clearly works reasonably well, more sophisticated notions of classification in this domain might yield better performance.
 
@@ -170,9 +193,21 @@ Unsurprisingly, actions that had high chance performance in leave-two-out cross-
 
 As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, expecting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it. Without that feature, waving is represented by the zero vector (CHECK).
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{feature_snap}
+  \caption{A summary of the two-stage learning process.}
+  \label{featplot}
+\end{figure}
+
 We also tried leaving out families of features, and the results are shown in Figure \ref{featgplot}.  This produced a marked difference in performance. It seems our semantic features that ... have the largest effect.
 
-
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{featuregrp_snap}
+  \caption{A summary of the two-stage learning process.}
+  \label{featgplot}
+\end{figure}
 
 \section{Conclusion}
 Our results demonstrate a proof-of-concept for zero shot learning in the domain of human action recognition from video. This technique allows extrapolation from labels in the training data set, so that we can classify videos with labels we have not yet seen.  Performance tended to vary depending on semantic feature and action, but was significantly better than noise in most cases. With a better-developed semantic feature base, we could see an improvement in results.
