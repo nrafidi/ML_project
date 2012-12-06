@@ -93,7 +93,7 @@ Where $r$ is the rank of the true label (with $0$ representing the first rank) a
 For each held-out action, we calculated the rank accuracy of each video of that action. This created a distribution that we compared against a simulated null distribution (see Section \ref{stats} for details) for statistical significance.
 
 \subsection{Feature Comparison}
-To see which semantic features yield the biggest advantage in decoding the action, we can test the leave-two-out cross-validation performance using only a subset of the semantic features in the intermediate set. This allows us to see if particular features are stronger predictors than others.
+To see which semantic features yield the biggest advantage in decoding the action, we can test the leave-two-out cross-validation performance using only a subset of the semantic features in the intermediate set. This allows us to see if particular features are stronger predictors than others.  Performance could also improve in the absence of a feature (as opposed to decrease) if that feature is especially uninformative.
 
 In the first version of the experiment, we tried leaving each semantic feature out in turn and measuring the performance. See Figure \ref{feature} for an illustration.
 
@@ -197,7 +197,7 @@ Unsurprisingly, actions that had high chance performance in leave-two-out cross-
 
 \subsection{Feature Comparison}
 
-As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, excepting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it.
+As is shown in Figure \ref{featplot}, no one feature is so important (or unimportant) that its absence significantly affects performance, excepting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it.
 
 \begin{figure}[h]
   \centering
