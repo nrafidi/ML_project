@@ -40,12 +40,11 @@ We found a low-dimensional set of features to distinguish the labels (run, walk,
 In the preprocessing stage, we extract low-level features from the videos using the spatio-temporal interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means, and any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
 
 In the first stage of the classification process, a linear regression model is trained for each semantic feature to map from the low-level features to that semantic feature, using L2 regularized linear regression. The regularization parameters are chosen independently for each feature, using cross-validation. In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
-
 Therefore, to classify a video, first, the low-level features are extracted. Then a corresponding point is found in the 12-dimensional semantic space using the learned mappings. The closest action point to this video's point is the label. See figure \ref{2stage} for a summary.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.5\linewidth]{2stagelearning.png}
+  \includegraphics[width=.45\linewidth]{2stagelearning.png}
   \caption{A summary of the two-stage learning process. The low-level video features are optical flow histogram descriptor clusters. We learn regression models that map the low-level features to each dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
   \label{2stage}
 \end{figure}
@@ -57,12 +56,14 @@ First, the 12 regression models are trained on all but two of the actions. Then,
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width = .45\linewidth]{ltocv}
+  \includegraphics[width = .4\linewidth]{ltocv}
   \caption{A diagram summarizing the leave-two-out cross-validation used to test zero-shot-learning. The classifier is able to tell whether a video is of skipping or jogging, despite having never seen an example of either action. We rate performance on a per-action basis as the percent of videos correctly classified for every possible two vs two pairing for that action.}
   \label{ltocv}
 \end{figure}
 
-For each action label, we were able to produce a distribution of percent of videos correctly classified versus opposing action. So, the results have this structure (numbers invented for the sake of example):
+For each action label, we produced a distribution of percent of videos
+correctly classified versus opposing action. So, the results have this
+structure (with fictitious numbers inserted here):
 
 \begin{table}[h]
 \centering
@@ -86,7 +87,7 @@ Where $r$ is the rank of the true label (with $0$ representing the first rank) a
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width = .45\linewidth]{ranking}
+  \includegraphics[width = .4\linewidth]{ranking}
   \caption{A diagram summarizing the rank test. The classifier ranks the potential action labels in order of nearness to the query point. Performance is measured with respect to the position of the true label.}
   \label{ranking}
 \end{figure}
@@ -177,7 +178,7 @@ Leave-two-out cross-validation performance was significantly above chance for mo
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.9\linewidth]{ltocv_snap_new}
+  \includegraphics[width=.85\linewidth]{ltocv_snap_new}
   \caption{Results when comparing leave-two-out cross-validation (LTOCV) performance on the data set with labels intact (blue), and on the data set with labels permuted (green). Error bars are $\pm$ the standard deviation of the distribution of two vs two pairs.}
   \label{ltocvplot}
 \end{figure}
@@ -188,7 +189,7 @@ Rank performance was also very significantly above chance for most actions, as w
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.9\linewidth]{rank_snap_new}
+  \includegraphics[width=.85\linewidth]{rank_snap_new}
   \caption{Rank test performance for the original (blue) and permuted (green) versions of the data set.  Error bars are $\pm$ the standard deviation of the distribution of rank scores for each video of a given action.}
   \label{rankplot}
 \end{figure}
@@ -203,7 +204,7 @@ As is shown in Figure \ref{featplot}, no one feature is so important (or unimpor
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.9\linewidth]{feature_snap}
+  \includegraphics[width=.85\linewidth]{feature_snap}
   \caption{Performance of leave-two-out cross-validation versus held-out semantic feature. Average performance of the complete model is given by the dashed line. Error bars are $\pm$ standard deviation of the distribution over two vs two pairs.}
   \label{featplot}
 \end{figure}
@@ -212,7 +213,7 @@ We also tried leaving out families of features, and the results are shown in Fig
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.9\linewidth]{featuregrp_snap}
+  \includegraphics[width=.85\linewidth]{featuregrp_snap}
   \caption{Performance of leave-two-out cross-validation versus held-out semantic feature group (see Table \ref{featgrp}). Average performance of the complete model is given by the dashed line. Error bars are $\pm$ standard deviation of the distribution over two vs two pairs.}
   \label{featgplot}
 \end{figure}
