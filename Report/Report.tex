@@ -20,7 +20,7 @@
 \maketitle
 
 \begin{abstract}
-We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition from video. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead define a set of semantic features using knowledge of human actions, and train regressors to map the videos to an intermediate semantic feature space, where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point. This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. We demonstrate the efficacy of this technique with several experiments, and conduct a preliminary analysis of our semantic features.
+We demonstrate the performance of zero-shot learning (ZSL) for the task of human action recognition from video. Instead of training a classifier to map from low-level video-extracted features directly to action labels, we instead define a set of semantic features using knowledge of human actions, and train regression models to map the videos to an intermediate semantic feature space, where each action label is a point in this feature space. We classify by choosing the canonical action point that is closest to the query point. This allows us to classify actions for which we have never seen video examples, a generalization that improves the feasibility of human action recognition. We demonstrate the efficacy of this technique with several experiments, and conduct a preliminary analysis of our semantic features.
 \end{abstract}
 
 \section{Introduction}
@@ -33,25 +33,25 @@ Like our approach, these works all make use of an intermediate step to process l
 
 \section{Methods}
 \subsection{Zero-Shot Learning}
-Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the semantic space. These training examples may not contain examples of all possible labels. The second stage is a nearest neighbor classification --- all labels (including those absent at training) are represented as points in the semantic space.  Classification is done by applying the learned regressor and then finding the closest label point in the semantic space.  Below we describe how we adapted this to the task of human action recognition.
+Zero-Shot Learning is a form of two-stage learning. In the first stage, a mapping is learned from the training examples to the semantic space. These training examples may not contain examples of all possible labels. The second stage is a nearest neighbor classification --- all labels (including those absent at training) are represented as points in the semantic space.  Classification is done by applying the learned regression model and then finding the closest label point in the semantic space \cite{Palatucci09}.  Below we describe how we adapted this to the task of human action recognition.
 
-We found a low-dimensional set of features to distinguish the labels (run, walk, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been using text corpus statistics or surveys, but our feature set works reasonably well as a proof-of-concept. Thus, in our model, a 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See section \ref{sf} for the complete list of these features.
+We found a low-dimensional set of features to distinguish the labels (run, walk, etc). We designed the feature set based on our knowledge of human actions. A potentially better way to have selected this set would have been to use text corpus statistics or surveys, but our feature set works reasonably well as a proof-of-concept. Thus, in our model, a 12-dimensional vector represents each action. These 12 features are discrete values corresponding to some canonical aspect of an action (e.g. `Is there horizontal displacement?'). See Section \ref{sf} for the complete list of these features.
 
 In the preprocessing stage, we extract low-level features from the videos using the spatio-temporal interest points algorithm, a 3-dimensional generalization of Harris points. The points are selected as the local maxima of a particular function on the video which selects for large local variation in all directions \cite{Laptev05}. We then compute an optical flow histogram (OFH) descriptor for each interest point. The x- and y-direction flow values in a neighborhood of a point are separately binned and the counts normalized. The two histograms are then concatenated to form the descriptor for each point. A single descriptor represents a whole video with a bag-of-features model. The OFH descriptors from all training videos are clustered by k-means, and any video then is represented by the normalized histogram of the clusters to which its OFH descriptors belong \cite{Laptev04}.
 
-In the first stage of the classification process, a linear regressor is trained for each semantic feature to map from the low-level features to that semantic feature, using L2 regularized linear regression. The regularization parameters are chosen independently for each feature, using cross-validation. In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
+In the first stage of the classification process, a linear regression model is trained for each semantic feature to map from the low-level features to that semantic feature, using L2 regularized linear regression. The regularization parameters are chosen independently for each feature, using cross-validation. In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\linewidth]{2stagelearning.png}
-  \caption{A summary of the two-stage learning process. The low-level video features are optical flow hisogram descriptor clusters. We learn one regressors that map the low-level features to a dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
+  \caption{A summary of the two-stage learning process. The low-level video features are optical flow hisogram descriptor clusters. We learn one regression models that maps the low-level features to a dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
   \label{2stage}
 \end{figure}
 
 \subsection{Leave-Two-Out Cross-Validation}
-To test the effectiveness of this two-step method over direct video-to-label mappings, we can perform leave-two-out cross-validation, and demonstrate the ZSL classifier’s ability to distinguish between two previously unseen class labels based on their video data, a task that direct mappings are unable to perform.
+To test the effectiveness of this two-step method over direct video-to-label mappings, we can perform leave-two-out cross-validation, and demonstrate the ability of the ZSL classifier to distinguish between two previously unseen class labels based on their video data, a task that direct mappings are unable to perform.
 
-First, the 12 regressors are trained on all but two of the actions. Then, a video of a previously unseen action is presented. This produces a query point in semantic space. The distance between the query point and the actual held-out action points is measured, and the point is classified. See figure \ref{ltocv} for a summary.
+First, the 12 regression models are trained on all but two of the actions. Then, a video of a previously unseen action is presented. This produces a query point in semantic space. The distance between the query point and the actual held-out action points is measured, and the point is classified. See Figure \ref{ltocv} for a summary.
 
 \begin{figure}[h]
   \centering
@@ -75,7 +75,7 @@ Wave & .90 & .99 & ---- & ... \\
 This distribution can be compared to a simulated null distribution (described in Section \ref{stats}) to determine significance of the results via paired t-test.
 
 \subsection{Rank Test}
-A more difficult task than leave-two-out cross-validation would be to compare the query point to all possible points in the semantic space. This allows us to determine if the ZSL classifier is biased toward items it has seen during training. In this experiment, we held one action out during training, and then had the classifier output the rank of the true action label when given a query action. All actions, even those held out in training, are still present in the semantic space as points. We calculated from this a rank accuracy with the following equation:
+A more difficult task than leave-two-out cross-validation would be to compare the query point to all possible points in the semantic space. This allows us to determine if the ZSL classifier is biased toward items it has seen during training. In this experiment, we held one action out during training, and then had the classifier output the rank of the true action label when given a query video. All actions, even those held out in training, are still present in the semantic space as points. We calculated from this a rank accuracy with the following equation:
 \begin{equation}
 accuracy = 1 - \frac{r}{T}
 \end{equation}
@@ -93,7 +93,7 @@ Where $r$ is the rank of the true label (with $0$ representing the first rank) a
 For each held-out action, we calculated the rank accuracy of each video of that action. This created a distribution that we compared against a simulated null distribution (see Section \ref{stats} for details) for statistical significance.
 
 \subsection{Feature Comparison}
-To see which semantic features yield the biggest advantage in decoding the action, we can test the leave-two-out cross-validation performance using only a subset of the semantic features in the intermediate set. This wil allow us to see if particular features are stronger predictors than others.
+To see which semantic features yield the biggest advantage in decoding the action, we can test the leave-two-out cross-validation performance using only a subset of the semantic features in the intermediate set. This allows us to see if particular features are stronger predictors than others.
 
 In the first version of the experiment, we tried leaving each semantic feature out in turn and measuring the performance. See Figure \ref{feature} for an illustration.
 
@@ -126,7 +126,7 @@ For each held out feature or group of features, we had a distribution of average
 \subsection{Statistical Significance}
 Each experiment generates a distribution of performance scores. The set of scores can be compared to chance with a paired t-test to establish significance.
 
-We establish chance with a permutation test. We sever the connection between the videos and their semantic feature labels and shuffling the data. The semantic feature space points representing the acitons remained tied to their actions. See Figure \ref{st} for an illustration.
+We establish chance with a permutation test. We sever the connection between the videos and their semantic feature labels and shuffle the data. The semantic feature space points representing the acitons remained tied to their actions. See Figure \ref{st} for an illustration.
 
 \begin{figure}[h]
   \centering
@@ -166,7 +166,7 @@ $Speed$: (Discrete 0--5) speed of center of mass.
 $Limbs$: (4 features, each Discrete 1--5) speed of each of the four limbs.
 \end{enumerate}
 \subsubsection{Coding Libraries}
-This project was coded using Python. Basic libraries used include, SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}. Figures generated with MATLAB \cite{matlab}.
+This project was coded using Python. Basic libraries used include: SciPy \cite{scipy}, NumPy \cite{numpy}, OpenCV \cite{opencv}, and The Python Image Library \cite{pil}. Ridge regression and cross-validation code taken from Scikit-learn \cite{scikit}. Figures generated with MATLAB \cite{matlab}.
 
 \section{Results}
 
@@ -180,7 +180,7 @@ Leave-two-out cross-validation performance was significantly above chance for mo
   \label{ltocvplot}
 \end{figure}
 
-Chance performance may seem high for two of the actions. This can be attributed to flaws in the semantic feature space, as there are some actions that, by nature of their location in the space, have a higher tendency to be selected.
+Chance performance may seem high for a few of the actions. This can be attributed to flaws in the semantic feature space, as there are some actions that, by nature of their location in the space, have a higher tendency to be selected.
 
 Rank performance was also very significantly above chance for most actions, as well as for performance averaged across action. See Figure \ref{rankplot}.
 
@@ -191,13 +191,13 @@ Rank performance was also very significantly above chance for most actions, as w
   \label{rankplot}
 \end{figure}
 
-The variance of these results are noticeably lower than those of the leave-two-out cross-validation results, perhaps due to the nature of the score (there is a strict bound on the variance of a distribution of rank scores).  It also speaks to the consistency of the model that videos from the same action label tend to produce the same rank, even if that rank is not correct.
+The variance of these results are noticeably lower than those of the leave-two-out cross-validation results, perhaps due to the nature of the score (there is a strict bound on the variance of a distribution of rank scores), and also due to the larger number of runs.  It also speaks to the consistency of the model that videos from the same action label tend to produce the same rank, even if that rank is not correct.
 
 Unsurprisingly, actions that had high chance performance in leave-two-out cross-validation again had relatively high chance performance in this setting. An additional line of reasoning that can explain these results is the non-Euclidean nature of the semantic space. While using Euclidean distance clearly works reasonably well, more sophisticated notions of classification in this domain might yield better results in the form of greater difference between true and chance performance.
 
 \subsection{Feature Comparison}
 
-As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, expecting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it.
+As is shown in Figure \ref{featplot}, no one feature is so important that its absence significantly affects performance, excepting the speed of the right arm.  However it is easy to see why, given that waving only involves that feature, it would hurt performance to not have it.
 
 \begin{figure}[h]
   \centering
