@@ -41,10 +41,12 @@ In the preprocessing stage, we extract low-level features from the videos using 
 
 In the first stage of the classification process, a linear regression model is trained for each semantic feature to map from the low-level features to that semantic feature, using L2 regularized linear regression. The regularization parameters are chosen independently for each feature, using cross-validation. In the second stage, each action is represented by a point in this 12-dimensional feature space. To classify a video, the corresponding point is found, and the closest action point, by the Euclidean metric, is the label. See figure \ref{2stage} for a summary. While the semantic space is not necessarily Euclidean, using Euclidean distance works in practice.
 
+Therefore, to classify a video, first, the low-level features are extracted. Then a corresponding point is found in the 12-dimensional semantic space using the learned mappings. The closest action point to this video's point is the label. See figure \ref{2stage} for a summary.
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\linewidth]{2stagelearning.png}
-  \caption{A summary of the two-stage learning process. The low-level video features are optical flow hisogram descriptor clusters. We learn one regression models that maps the low-level features to a dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
+  \caption{A summary of the two-stage learning process. The low-level video features are optical flow histogram descriptor clusters. We learn regression models that map the low-level features to each dimension in the semantic feature space. Each action label is represented by a canonical point in that space.  To test a query point, we apply the regression and then perform nearest-neighbor classification in semantic space.}
   \label{2stage}
 \end{figure}
 
